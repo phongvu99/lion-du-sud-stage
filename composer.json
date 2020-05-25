@@ -1,0 +1,17 @@
+{
+    "name": "vutuanphong/php-webscraper",
+    "description": "A simple PHP web scraper.",
+    "license": "MIT License",
+    "authors": [
+        {
+            "name": "phongvu99",
+            "email": "phongvu99@outlook.com"
+        }
+    ],
+    "require": {
+        "fabpot/goutte": "^4.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.5.5"
+    }
+}

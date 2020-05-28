@@ -1,4 +1,5 @@
 <?php
+
 namespace Scraper;
 
 class Node

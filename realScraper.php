@@ -1,18 +1,22 @@
 <?php
 
-require "inc/config.php";
-require "scraper.php";
+require "vendor/autoload.php";
 
-use Scraper\Node;
+use Scraper\PHPScraper;
 
-$crawler = getCrawler($uri);
+$phpScraper = new PHPScraper();
+$phpScraper->init();
 
-$nodeList = crawl($uri, $crawler, array(), 0);
+$crawler = $phpScraper->getCrawler();
+
+$nodeList = $phpScraper->crawl($crawler, array(), 0);
 $iter = 0;
 
 foreach ($nodeList as $nodeKey => $nodeValue) {
     echo "Current iteration $iter \n";
-    $nodeList += crawl($nodeKey, getCrawler($nodeKey), array(), 0);
+    $phpScraper->setUri($nodeKey);
+    $crawler = $phpScraper->getCrawler();
+    $nodeList += $phpScraper->crawl($crawler, array(), 0);
     $iter++;
 //    echo "Current nodeKey $nodeKey \n";
 //    echo "----------------------------------- \n";
@@ -36,10 +40,10 @@ $n = count($nodeList);
 
 $root = null;
 
-$root = bstScraper($keys, $nodeList, $root, 0, $n);
+$root = $phpScraper->bstScraper($keys, $nodeList, $root, 0, $n);
 
 echo "Enter an URL included in the above 10 links \n";
 $uri = trim(fgets(STDIN));
 echo "I got it:\n" . $uri . "\n";
 
-echo "URL Title: " . bstInOrder($root, $uri)->getValue() . "\n";
+echo "URL Title: " . $phpScraper->bstNodeFind($root, $uri)->getValue() . "\n";

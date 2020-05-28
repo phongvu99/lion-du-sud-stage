@@ -11,7 +11,6 @@ class PHPScraper
 {
     private $uri;
 
-
     /**
      * Initialize a PHPScraper given the URI
      */
@@ -70,25 +69,37 @@ class PHPScraper
         echo "Total node: $totalNode \n";*/
 
         // Recursion criteria || base cases
-        if ($totalNode === 0 || $n === 10 || $n === $totalNode) {
+        if ($totalNode === 0 || count($nodeArray) === 10 || $n === $totalNode) {
             return $nodeArray;
         }
 
         $nodeKey = $this->getNodeKey($nodeList, $n);
-        if ($nodeKey !== $this->uri && $nodeKey !== "") {
-            $nodeValue = $nodeList->eq($n)->text();
-            if (empty($nodeValue)) {
-                $nodeValue = $nodeKey;
-                $nodeValue = parse_url($nodeValue);
-                if (isset($nodeValue['path'])) {
-                    $nodeValue = $nodeValue['host'] . $nodeValue['path'];
-                } else {
-                    $nodeValue = $nodeValue['host'];
+
+        /**
+         * Perform a regular expression match, filter out
+         * all href links include javascript
+         */
+        if (preg_match('/javascript/', $nodeKey) === 0) {
+            if ($nodeKey !== $this->uri && $nodeKey !== "") {
+                $nodeValue = $nodeList->eq($n)->text();
+                if (empty($nodeValue)) {
+                    $nodeValue = $nodeKey;
+                    $nodeValue = parse_url($nodeValue);
+                    if (isset($nodeValue['path'])) {
+                        $nodeValue = $nodeValue['host'] . $nodeValue['path'];
+                    } else {
+                        $nodeValue = $nodeValue['host'];
+                    }
                 }
+                $nodeArray += [$nodeKey => $nodeValue];
             }
-            $nodeArray += [$nodeKey => $nodeValue];
         }
-        return $this->crawl($crawler, $nodeArray, ++$n);
+
+        if (count($nodeArray) !== 10) {
+            $nodeArray = $this->crawl($crawler, $nodeArray, ++$n);
+        }
+
+        return $nodeArray;
     }
 
     /**
@@ -149,17 +160,17 @@ class PHPScraper
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getUri()
+    public function getUri(): string
     {
         return $this->uri;
     }
 
     /**
-     * @param mixed $uri
+     * @param string $uri
      */
-    public function setUri($uri): void
+    public function setUri(string $uri): void
     {
         $this->uri = $uri;
     }

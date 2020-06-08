@@ -1,6 +1,6 @@
 <?php
 
-namespace Scraper;
+namespace PersonalTouch\Scraper;
 
 use Goutte\Client;
 use LogicException;
